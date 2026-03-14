@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "factor-analyzer>=0.5.1",
-    "scikit-learn>=1.6",
+    "scikit-learn>=1.6,<1.8",  # factor-analyzer uses removed sklearn 1.8 internal (force_all_finite)
     "matplotlib>=3.10.0",
     "numpy>=2.2.2",
     "openpyxl>=3.1.5",
