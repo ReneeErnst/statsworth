@@ -103,7 +103,7 @@ def parallel_analysis(
     )  # noqa: E501
 
     if show_scree_plot:
-        from stats_core.visualization import scree_parallel_analysis
+        from statsworth.visualization import scree_parallel_analysis
 
         scree_parallel_analysis(max_scree_factors, avg_factor_eigens, data_ev)
 

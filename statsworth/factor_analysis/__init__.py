@@ -1,4 +1,4 @@
-from stats_core.factor_analysis.efa import (
+from statsworth.factor_analysis.efa import (
     LOW_LOADING_THRESHOLD,
     cronbach_alpha,
     efa,

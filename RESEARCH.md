@@ -1,4 +1,4 @@
-# Migration Research: scaledev → stats-core
+# Migration Research: scaledev → statsworth
 
 ## 1. Core Logic — Migration Candidates
 
@@ -54,9 +54,9 @@ The following patterns used in notebooks should inform the library's API design:
 
 ## 2. Structural Gaps — Directory Reorganization
 
-### Current stats-core structure
+### Current statsworth structure
 ```
-stats-core/
+statsworth/
 ├── .git/
 ├── .gitignore
 ├── LICENSE
@@ -64,10 +64,10 @@ stats-core/
 └── refactor_plan.md
 ```
 
-### Proposed stats-core structure (after migration)
+### Proposed statsworth structure (after migration)
 ```
-stats-core/
-├── stats_core/
+statsworth/
+├── statsworth/
 │   ├── __init__.py
 │   ├── preprocessing/
 │   │   ├── __init__.py
@@ -111,7 +111,7 @@ stats-core/
 
 ## 3. Dependencies
 
-The following dependencies from scaledev must be added to stats-core's `pyproject.toml`:
+The following dependencies from scaledev must be added to statsworth's `pyproject.toml`:
 
 | Package | Used In | Notes |
 |---|---|---|
@@ -135,7 +135,7 @@ The following dependencies from scaledev must be added to stats-core's `pyprojec
 
 **Build system:** Use `hatchling` + `uv` (same as scaledev — no reason to change).
 
-**Note:** `graphviz` and `jupyter` from scaledev are NOT needed in stats-core library code (they are runtime/notebook tools, not library dependencies).
+**Note:** `graphviz` and `jupyter` from scaledev are NOT needed in statsworth library code (they are runtime/notebook tools, not library dependencies).
 
 ---
 
@@ -143,10 +143,10 @@ The following dependencies from scaledev must be added to stats-core's `pyprojec
 
 ### Existing tests (from scaledev)
 - `tests/test_modeler.py` — covers only `rmsea_95ci()` (9 test methods, well-written)
-  - These tests can be migrated directly to `stats-core/tests/test_sem.py`
+  - These tests can be migrated directly to `statsworth/tests/test_sem.py`
   - `_fit_model()` helper and `_expected_95ci()` reference implementation should be preserved
 
-### Tests that need to be written for stats-core
+### Tests that need to be written for statsworth
 
 **`test_preprocessing.py`**
 - `clean_columns`: column name normalization, all-NaN row removal
@@ -177,7 +177,7 @@ The following dependencies from scaledev must be added to stats-core's `pyprojec
 
 **Recommended test data strategy:**
 - Generate synthetic DataFrames with known statistical properties using `numpy.random` with fixed seeds
-- Avoid loading from Excel files in tests (no `data/` directory in stats-core)
+- Avoid loading from Excel files in tests (no `data/` directory in statsworth)
 
 ---
 

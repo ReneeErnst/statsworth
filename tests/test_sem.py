@@ -5,7 +5,7 @@ import semopy
 from scipy.stats import chi2 as chi2_dist
 from scipy.stats import ncx2
 
-from stats_core.sem import rmsea_95ci
+from statsworth.sem import rmsea_95ci
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from stats_core.anova.one_way import (
+from statsworth.anova.one_way import (
     games_howell,
     one_way_anova,
     welch_anova_and_games_howell,

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from stats_core.preprocessing import (
+from statsworth.preprocessing import (
     clean_columns,
     corrected_item_total_correlations,
     scale_totals,

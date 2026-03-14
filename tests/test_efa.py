@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from stats_core.factor_analysis.efa import (
+from statsworth.factor_analysis.efa import (
     LOW_LOADING_THRESHOLD,
     cronbach_alpha,
     efa,
@@ -66,21 +66,21 @@ class TestEfa:
 
 class TestParallelAnalysis:
     def test_returns_int(self):
-        from stats_core.factor_analysis.efa import parallel_analysis
+        from statsworth.factor_analysis.efa import parallel_analysis
 
         df = _make_factor_data()
         result = parallel_analysis(df, K=5)
         assert isinstance(result, int)
 
     def test_result_in_valid_range(self):
-        from stats_core.factor_analysis.efa import parallel_analysis
+        from statsworth.factor_analysis.efa import parallel_analysis
 
         df = _make_factor_data()
         result = parallel_analysis(df, K=5)
         assert 1 <= result <= len(df.columns)
 
     def test_suggests_three_factors_for_three_factor_data(self):
-        from stats_core.factor_analysis.efa import parallel_analysis
+        from statsworth.factor_analysis.efa import parallel_analysis
 
         df = _make_factor_data(seed=0)
         result = parallel_analysis(df, K=10)
@@ -88,7 +88,7 @@ class TestParallelAnalysis:
         assert result == 3
 
     def test_print_eigenvalues(self, capsys):
-        from stats_core.factor_analysis.efa import parallel_analysis
+        from statsworth.factor_analysis.efa import parallel_analysis
 
         df = _make_factor_data()
         parallel_analysis(df, K=5, print_eigenvalues=True)
@@ -96,7 +96,7 @@ class TestParallelAnalysis:
         assert "Factor eigenvalues" in captured.out
 
     def test_show_scree_plot(self):
-        from stats_core.factor_analysis.efa import parallel_analysis
+        from statsworth.factor_analysis.efa import parallel_analysis
 
         df = _make_factor_data()
         result = parallel_analysis(df, K=5, show_scree_plot=True, max_scree_factors=9)

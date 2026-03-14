@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from stats_core.anova.manova import one_way_manova, one_way_manova_games_howell
+from statsworth.anova.manova import one_way_manova, one_way_manova_games_howell
 
 
 def _make_significant_manova_data(seed: int = 0) -> pd.DataFrame:

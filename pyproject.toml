@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "stats-core"
+name = "statsworth"
 version = "0.1.0"
 description = "Unified statistical analysis library"
 readme = "README.md"

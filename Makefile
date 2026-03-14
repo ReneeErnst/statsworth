@@ -4,17 +4,17 @@ install:
 	uv sync
 
 lint:
-	uv run ruff check stats_core/ tests/
-	uv run ruff format --check stats_core/ tests/
+	uv run ruff check statsworth/ tests/
+	uv run ruff format --check statsworth/ tests/
 
 typecheck:
-	uv run mypy stats_core/
+	uv run mypy statsworth/
 
 test:
 	uv run pytest tests/ -v --tb=short
 
 coverage:
-	uv run pytest tests/ --cov=stats_core --cov-report=term-missing
+	uv run pytest tests/ --cov=statsworth --cov-report=term-missing
 
 pre-commit:
 	uv run pre-commit run --all-files

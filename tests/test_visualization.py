@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from stats_core.visualization import (
+from statsworth.visualization import (
     check_normality,
     corr_heatmap,
     efa_item_corr_matrix,

@@ -9,7 +9,7 @@ import statsmodels.stats.api as sms
 from statsmodels.multivariate.manova import MANOVA
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-from stats_core.anova.one_way import DEFAULT_ALPHA, games_howell
+from statsworth.anova.one_way import DEFAULT_ALPHA, games_howell
 
 
 def _run_manova(

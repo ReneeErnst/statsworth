@@ -1,11 +1,11 @@
-from stats_core.anova import (
+from statsworth.anova import (
     games_howell,
     one_way_anova,
     one_way_manova,
     one_way_manova_games_howell,
     welch_anova_and_games_howell,
 )
-from stats_core.factor_analysis import (
+from statsworth.factor_analysis import (
     LOW_LOADING_THRESHOLD,
     efa,
     factor_loadings_table,
@@ -13,14 +13,14 @@ from stats_core.factor_analysis import (
     no_low_loadings_solution,
     strongest_loadings,
 )
-from stats_core.preprocessing import (
+from statsworth.preprocessing import (
     clean_columns,
     corrected_item_total_correlations,
     scale_totals,
     vif,
 )
-from stats_core.sem import rmsea_95ci
-from stats_core.visualization import (
+from statsworth.sem import rmsea_95ci
+from statsworth.visualization import (
     check_normality,
     corr_heatmap,
     efa_item_corr_matrix,

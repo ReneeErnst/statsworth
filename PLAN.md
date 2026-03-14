@@ -1,4 +1,4 @@
-# Migration Plan: scaledev → stats-core
+# Migration Plan: scaledev → statsworth
 
 > **Status:** Phase 1 complete. Awaiting signal to begin Phase 2.
 
@@ -8,7 +8,7 @@
 
 ### 1.1 Directory structure
 ```
-stats_core/
+statsworth/
 ├── __init__.py
 ├── preprocessing.py
 ├── visualization.py
@@ -32,7 +32,7 @@ Targets: `install`, `lint`, `typecheck`, `test`.
 
 ### 1.4 Gate — PASSED
 ```bash
-uv run python -c "import stats_core"  # exits 0
+uv run python -c "import statsworth"  # exits 0
 ```
 
 ---
@@ -40,7 +40,7 @@ uv run python -c "import stats_core"  # exits 0
 ## Phase 2: Foundation Migration
 
 ### 2.1 Migrate `clean_columns`
-Copy from `scaledev/preprocessor.py` into `stats_core/preprocessing.py`.
+Copy from `scaledev/preprocessor.py` into `statsworth/preprocessing.py`.
 Apply the **critical syntax fix** (line 22 double assignment):
 ```python
 # Before (bug):
@@ -51,7 +51,7 @@ df.columns = df.columns.str.lower()
 Add type hints: `def clean_columns(df: pd.DataFrame) -> pd.DataFrame`.
 
 ### 2.2 Migrate `corrected_item_total_correlations` and `vif`
-Copy into `stats_core/preprocessing.py`.
+Copy into `statsworth/preprocessing.py`.
 Add full type hints to both functions.
 Vectorize `corrected_item_total_correlations` (replace column loop with `.corrwith()` or equivalent pandas vectorized operation).
 
@@ -81,7 +81,7 @@ All tests must pass before Phase 3.
 ## Phase 3: Domain Migration
 
 ### 3.1 Migrate `factor_analysis` module
-Copy from `scaledev/modeler.py` into `stats_core/factor_analysis/efa.py`:
+Copy from `scaledev/modeler.py` into `statsworth/factor_analysis/efa.py`:
 - `efa`, `parallel_analysis`, `factor_loadings_table`, `get_items_with_low_loadings`, `no_low_loadings_solution`, `strongest_loadings`
 
 Add missing type hints to `efa()`, `parallel_analysis()`, `factor_loadings_table()`.
@@ -100,7 +100,7 @@ uv run pytest tests/test_efa.py -v
 ```
 
 ### 3.3 Migrate `anova` module
-Copy from `scaledev/modeler.py` into `stats_core/anova/one_way.py`:
+Copy from `scaledev/modeler.py` into `statsworth/anova/one_way.py`:
 - `one_way_anova`, `welch_anova_and_games_howell`, `games_howell`
 
 Extract magic number: `DEFAULT_ALPHA = 0.05` as module-level constant.
@@ -117,7 +117,7 @@ uv run pytest tests/test_anova.py -v
 ```
 
 ### 3.5 Migrate `manova` module with shared-logic extraction
-Copy from `scaledev/modeler.py` into `stats_core/anova/manova.py`:
+Copy from `scaledev/modeler.py` into `statsworth/anova/manova.py`:
 - `one_way_manova`, `one_way_manova_games_howell`
 
 **Extract shared logic** into internal helper:
@@ -152,7 +152,7 @@ All must pass before Phase 4.
 ## Phase 4: Visualization & SEM
 
 ### 4.1 Migrate `visualization` module
-Copy from `scaledev/vizer.py` into `stats_core/visualization.py`:
+Copy from `scaledev/vizer.py` into `statsworth/visualization.py`:
 - `highlight_corr`, `corr_matrix`, `scree_plot`, `scree_parallel_analysis`, `plot_loadings_heatmap`, `check_normality`, `corr_matrix_v2`
 
 Apply fixes:
@@ -163,13 +163,13 @@ Add type hints to all functions.
 Do **not** migrate `get_data_dir()` or `set_pd_display()`.
 
 ### 4.2 Migrate `sem` module
-Copy `rmsea_95ci` from `scaledev/modeler.py` into `stats_core/sem.py`.
+Copy `rmsea_95ci` from `scaledev/modeler.py` into `statsworth/sem.py`.
 Confirm type hints are present (already annotated in source).
 
 ### 4.3 Migrate existing `rmsea_95ci` tests
-Copy `scaledev/tests/test_modeler.py` → `stats-core/tests/test_sem.py`.
+Copy `scaledev/tests/test_modeler.py` → `statsworth/tests/test_sem.py`.
 Preserve `_fit_model()` helper and `_expected_95ci()` reference implementation unchanged.
-Update import: `from scaledev.modeler import rmsea_95ci` → `from stats_core.sem import rmsea_95ci`.
+Update import: `from scaledev.modeler import rmsea_95ci` → `from statsworth.sem import rmsea_95ci`.
 
 ### 4.4 Write `tests/test_visualization.py`
 Smoke tests only — verify functions execute without raising:
@@ -191,19 +191,19 @@ All must pass before Phase 5.
 
 ### 5.1 Type hints pass
 ```bash
-uv run mypy stats_core/
+uv run mypy statsworth/
 ```
 Resolve all errors. Target: zero mypy errors with `strict = false` (gradual typing).
 
 ### 5.2 Lint and format pass
 ```bash
-uv run ruff check stats_core/ tests/
-uv run ruff format stats_core/ tests/
+uv run ruff check statsworth/ tests/
+uv run ruff format statsworth/ tests/
 ```
 
 ### 5.3 Add `__all__` to all `__init__.py` files
 `anova/__init__.py` and `factor_analysis/__init__.py` re-export their public APIs.
-Top-level `stats_core/__init__.py` re-exports everything.
+Top-level `statsworth/__init__.py` re-exports everything.
 
 ### 5.4 Add module-level docstrings
 One-line docstrings to all modules:
@@ -217,7 +217,7 @@ uv run pytest tests/ -v --tb=short
 
 ### 5.6 Final lint + type gate
 ```bash
-uv run ruff check stats_core/ tests/ && uv run mypy stats_core/
+uv run ruff check statsworth/ tests/ && uv run mypy statsworth/
 ```
 
 ---
@@ -226,8 +226,8 @@ uv run ruff check stats_core/ tests/ && uv run mypy stats_core/
 
 | Phase | Key Deliverable | Gate Command |
 |---|---|---|
-| 1 ✓ | `pyproject.toml`, directory scaffold | `uv run python -c "import stats_core"` |
+| 1 ✓ | `pyproject.toml`, directory scaffold | `uv run python -c "import statsworth"` |
 | 2 | `preprocessing.py` + tests | `uv run pytest tests/test_preprocessing.py -v` |
 | 3 | `factor_analysis/efa.py`, `anova/one_way.py`, `anova/manova.py` + tests | `uv run pytest tests/test_efa.py tests/test_anova.py tests/test_manova.py -v` |
 | 4 | `visualization.py`, `sem.py` + tests | `uv run pytest tests/test_sem.py tests/test_visualization.py -v` |
-| 5 | Type hints, lint, `__all__`, full suite | `uv run pytest tests/ -v && uv run ruff check stats_core/ tests/` |
+| 5 | Type hints, lint, `__all__`, full suite | `uv run pytest tests/ -v && uv run ruff check statsworth/ tests/` |
