@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ReneeErnst/statsworth/actions/workflows/ci.yml/badge.svg)](https://github.com/ReneeErnst/statsworth/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ReneeErnst/statsworth/branch/main/graph/badge.svg)](https://codecov.io/gh/ReneeErnst/statsworth)
-![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
+![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 
 A reusable Python library for statistical analysis, built to support research workflows.
 
