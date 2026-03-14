@@ -92,12 +92,12 @@ class TestOneWayManovaGamesHowell:
         with pytest.raises(ValueError, match="MANOVA not suitable"):
             one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
 
-    def test_significant_dv_has_gh_results(self):
+    @pytest.mark.parametrize("dv", ["dv1", "dv2"])
+    def test_significant_dv_has_gh_results(self, dv):
         df = _make_significant_manova_data()
         _, _, gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
         # Both DVs are strongly significant, so both should have GH results
-        assert gh["dv1"] is not None
-        assert gh["dv2"] is not None
+        assert gh[dv] is not None
 
     def test_custom_alpha(self):
         df = _make_significant_manova_data()

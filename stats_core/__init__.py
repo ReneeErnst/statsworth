@@ -22,8 +22,8 @@ from stats_core.preprocessing import (
 from stats_core.sem import rmsea_95ci
 from stats_core.visualization import (
     check_normality,
-    corr_matrix,
-    corr_matrix_v2,
+    corr_heatmap,
+    efa_item_corr_matrix,
     highlight_corr,
     plot_loadings_heatmap,
     scree_parallel_analysis,
@@ -53,8 +53,8 @@ __all__ = [
     "rmsea_95ci",
     # visualization
     "check_normality",
-    "corr_matrix",
-    "corr_matrix_v2",
+    "corr_heatmap",
+    "efa_item_corr_matrix",
     "highlight_corr",
     "plot_loadings_heatmap",
     "scree_parallel_analysis",

@@ -4,8 +4,8 @@ import pytest
 
 from stats_core.visualization import (
     check_normality,
-    corr_matrix,
-    corr_matrix_v2,
+    corr_heatmap,
+    efa_item_corr_matrix,
     highlight_corr,
     plot_loadings_heatmap,
     scatter_with_regression,
@@ -39,13 +39,12 @@ class TestHighlightCorr:
 
 
 class TestScreePlot:
-    def test_runs_without_error(self):
-        ev = np.array([3.0, 2.0, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2])
-        scree_plot(ev, max_viz=5)
-
-    def test_runs_with_default_max_viz(self):
-        ev = np.ones(25)
-        scree_plot(ev)
+    @pytest.mark.parametrize("ev,max_viz", [
+        (np.array([3.0, 2.0, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2]), 5),
+        (np.ones(25), 20),
+    ])
+    def test_runs_without_error(self, ev, max_viz):
+        scree_plot(ev, max_viz=max_viz)
 
 
 class TestScreeParallelAnalysis:
@@ -76,15 +75,11 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert set(result.keys()) == set(df.columns)
 
-    def test_result_has_expected_keys(self):
+    @pytest.mark.parametrize("key", ["describe", "skewness", "kurtosis", "ks_statistic", "ks_pvalue"])
+    def test_result_has_expected_keys(self, key):
         df = _make_df(cols=1)
         result = check_normality(df, dist_plot=False, qq_plot=False)
-        col_result = result["var0"]
-        assert "describe" in col_result
-        assert "skewness" in col_result
-        assert "kurtosis" in col_result
-        assert "ks_statistic" in col_result
-        assert "ks_pvalue" in col_result
+        assert key in result["var0"]
 
     def test_ks_pvalue_in_valid_range(self):
         df = _make_df()
@@ -105,24 +100,34 @@ class TestCheckNormality:
         assert isinstance(result, dict)
 
 
-class TestCorrMatrix:
+class TestEfaItemCorrMatrix:
     def test_returns_styler(self):
         import pandas.io.formats.style
 
         df = _make_df()
-        result = corr_matrix(df, list(df.columns))
+        result = efa_item_corr_matrix(df, list(df.columns))
         assert isinstance(result, pandas.io.formats.style.Styler)
 
-    def test_shape_matches_cols(self):
+    @pytest.mark.parametrize("cols,expected_shape", [
+        (["var0", "var1"], (2, 2)),
+        (["var0", "var1", "var2"], (3, 3)),
+    ])
+    def test_shape_matches_cols(self, cols, expected_shape):
         df = _make_df()
-        result = corr_matrix(df, ["var0", "var1"])
-        assert result.data.shape == (2, 2)
+        result = efa_item_corr_matrix(df, cols)
+        assert result.data.shape == expected_shape
+
+    def test_title_sets_caption(self):
+        df = _make_df()
+        result = efa_item_corr_matrix(df, list(df.columns), title="My Matrix")
+        assert result.caption == "My Matrix"
 
 
-class TestCorrMatrixV2:
+class TestCorrHeatmap:
     def test_runs_without_error(self):
         df = _make_df()
-        corr_matrix_v2(df, title="Test Correlation Matrix")
+        corr_heatmap(df, title="Test Correlation Matrix")
+
 
 
 class TestScatterWithRegression:

@@ -28,18 +28,42 @@ def highlight_corr(val: float) -> str:
     return f"background-color: {color}"
 
 
-def corr_matrix(df: pd.DataFrame, cols: list[str]) -> "pd.io.formats.style.Styler":
-    """Return a styled correlation matrix with colour-coded cells.
+def efa_item_corr_matrix(
+    df: pd.DataFrame,
+    cols: list[str],
+    title: str | None = None,
+) -> "pd.io.formats.style.Styler":
+    """Return a styled correlation matrix for EFA item screening.
+
+    Highlights strong correlations (|r| > 0.6) in green and weak correlations
+    (|r| < 0.3) in blue to flag candidates for removal during item reduction.
+    Only the lower triangle is shown to reduce visual noise.
 
     Args:
         df: DataFrame containing the data.
         cols: Column names to include in the correlation matrix.
+        title: Optional caption displayed above the table.
 
     Returns:
         Styled pandas Styler object.
     """
     corr = df[cols].corr()
-    return corr.style.map(highlight_corr)
+    n = len(corr)
+
+    def _style(data: pd.DataFrame) -> pd.DataFrame:
+        styles = pd.DataFrame("", index=data.index, columns=data.columns)
+        for i in range(n):
+            for j in range(n):
+                if j > i:
+                    styles.iloc[i, j] = "visibility: hidden"
+                else:
+                    styles.iloc[i, j] = highlight_corr(data.iloc[i, j])
+        return styles
+
+    styled = corr.style.apply(_style, axis=None)
+    if title:
+        styled = styled.set_caption(title)
+    return styled
 
 
 def scree_plot(common_factors_ev: np.ndarray, max_viz: int = 20) -> None:
@@ -201,7 +225,7 @@ def scatter_with_regression(df: pd.DataFrame, x: str, y: str) -> float:
     return float(df[x].corr(df[y]))
 
 
-def corr_matrix_v2(df: pd.DataFrame, title: str) -> None:
+def corr_heatmap(df: pd.DataFrame, title: str) -> None:
     """Plot a masked lower-triangle correlation heatmap.
 
     Args:

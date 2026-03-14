@@ -89,7 +89,8 @@ class TestVif:
         assert "feature" in result.columns
         assert "VIF" in result.columns
 
-    def test_high_vif_for_collinear_features(self):
+    @pytest.mark.parametrize("feature", ["a", "b"])
+    def test_high_vif_for_collinear_features(self, feature):
         rng = np.random.default_rng(42)
         x = rng.normal(size=100)
         df = pd.DataFrame(
@@ -97,8 +98,7 @@ class TestVif:
         )
         result = vif(df)
         feature_vifs = result[result["feature"] != "const"].set_index("feature")["VIF"]
-        assert feature_vifs["a"] > 10
-        assert feature_vifs["b"] > 10
+        assert feature_vifs[feature] > 10
 
     def test_low_vif_for_independent_features(self):
         rng = np.random.default_rng(42)
@@ -109,11 +109,11 @@ class TestVif:
 
 
 class TestScaleTotals:
-    def test_adds_total_columns(self):
+    @pytest.mark.parametrize("col", ["sub_a_total", "sub_b_total"])
+    def test_adds_total_columns(self, col):
         df = pd.DataFrame({"a1": [1, 2], "a2": [3, 4], "b1": [5, 6], "b2": [7, 8]})
         result = scale_totals(df, {"sub_a": ["a1", "a2"], "sub_b": ["b1", "b2"]})
-        assert "sub_a_total" in result.columns
-        assert "sub_b_total" in result.columns
+        assert col in result.columns
 
     def test_correct_sums(self):
         df = pd.DataFrame({"a1": [1, 2], "a2": [3, 4]})
