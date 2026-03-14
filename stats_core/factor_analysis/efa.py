@@ -4,9 +4,23 @@ from typing import Tuple
 
 import numpy as np
 import pandas as pd
+import pingouin as pg
 from factor_analyzer.factor_analyzer import FactorAnalyzer
 
 LOW_LOADING_THRESHOLD = 0.4
+
+
+def cronbach_alpha(df: pd.DataFrame) -> tuple[float, np.ndarray]:
+    """Compute Cronbach's alpha (internal consistency) for a set of items.
+
+    Args:
+        df: DataFrame where rows are respondents and columns are scale items.
+
+    Returns:
+        Tuple of ``(alpha, ci)`` where ``alpha`` is the point estimate and
+        ``ci`` is a length-2 array with the 95% confidence interval bounds.
+    """
+    return pg.cronbach_alpha(df)
 
 
 def efa(

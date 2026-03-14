@@ -181,6 +181,26 @@ def check_normality(
     return results
 
 
+def scatter_with_regression(df: pd.DataFrame, x: str, y: str) -> float:
+    """Plot a scatter plot with a regression line and return the Pearson correlation.
+
+    Displays a seaborn lmplot for the given variable pair.  The plot is shown
+    as a side effect; the correlation coefficient is returned so callers can
+    inspect or print it.
+
+    Args:
+        df: DataFrame containing the variables.
+        x: Column name for the x-axis variable.
+        y: Column name for the y-axis variable.
+
+    Returns:
+        Pearson correlation coefficient between ``x`` and ``y``.
+    """
+    sns.lmplot(x=x, y=y, data=df)
+    plt.show()
+    return float(df[x].corr(df[y]))
+
+
 def corr_matrix_v2(df: pd.DataFrame, title: str) -> None:
     """Plot a masked lower-triangle correlation heatmap.
 

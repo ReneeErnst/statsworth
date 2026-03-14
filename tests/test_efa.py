@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from stats_core.factor_analysis.efa import (
     LOW_LOADING_THRESHOLD,
+    cronbach_alpha,
     efa,
     factor_loadings_table,
     get_items_with_low_loadings,
@@ -57,6 +59,11 @@ class TestEfa:
         result = efa(df.values, n_factors=3)
         assert result.loadings_.shape == (9, 3)
 
+    def test_n_factors_none_uses_default(self):
+        df = _make_factor_data()
+        result = efa(df)
+        assert result.loadings_ is not None
+
 
 class TestParallelAnalysis:
     def test_returns_int(self):
@@ -81,6 +88,21 @@ class TestParallelAnalysis:
         # Strong 3-factor structure should suggest 3 factors
         assert result == 3
 
+    def test_print_eigenvalues(self, capsys):
+        from stats_core.factor_analysis.efa import parallel_analysis
+
+        df = _make_factor_data()
+        parallel_analysis(df, K=5, print_eigenvalues=True)
+        captured = capsys.readouterr()
+        assert "Factor eigenvalues" in captured.out
+
+    def test_show_scree_plot(self):
+        from stats_core.factor_analysis.efa import parallel_analysis
+
+        df = _make_factor_data()
+        result = parallel_analysis(df, K=5, show_scree_plot=True, max_scree_factors=9)
+        assert isinstance(result, int)
+
 
 class TestFactorLoadingsTable:
     def test_shape(self):
@@ -102,6 +124,22 @@ class TestFactorLoadingsTable:
         fa = efa(df, n_factors=3)
         result = factor_loadings_table(fa.loadings_, df.columns, ["F1", "F2", "F3"])
         assert list(result.index) == list(df.columns)
+
+    def test_single_factor(self):
+        loadings = np.array([[0.8], [0.7], [0.6]])
+        item_names = pd.Index(["i1", "i2", "i3"])
+        result = factor_loadings_table(loadings, item_names, ["F1"])
+        assert result.shape == (3, 1)
+        assert list(result.columns) == ["F1"]
+        assert list(result.index) == ["i1", "i2", "i3"]
+
+    def test_per_factor_item_names(self):
+        # Pass a list-of-lists: one name list per factor (exercises the else branch)
+        loadings = np.array([[0.8, 0.1], [0.7, 0.2], [0.1, 0.9]])
+        item_names = [["i1", "i2", "i3"], ["i1", "i2", "i3"]]
+        result = factor_loadings_table(loadings, item_names, ["F1", "F2"])
+        assert result.shape == (3, 2)
+        assert list(result.columns) == ["F1", "F2"]
 
 
 class TestGetItemsWithLowLoadings:
@@ -162,6 +200,33 @@ class TestNoLowLoadingsSolution:
             result_model.loadings_, list(result_df.columns)
         )
         assert remaining_low == []
+
+
+class TestCronbachAlpha:
+    def test_returns_float_and_array(self):
+        import numpy as np
+
+        df = _make_factor_data()
+        alpha, ci = cronbach_alpha(df)
+        assert isinstance(float(alpha), float)
+        assert len(ci) == 2
+
+    def test_high_internal_consistency(self):
+        """Strongly correlated items should yield alpha > 0.9."""
+        df = _make_factor_data()
+        # Use only the first 3 items (all loading on the same factor)
+        alpha, _ = cronbach_alpha(df[["i1", "i2", "i3"]])
+        assert float(alpha) > 0.9
+
+    def test_alpha_in_valid_range(self):
+        df = _make_factor_data()
+        alpha, _ = cronbach_alpha(df)
+        assert 0.0 <= float(alpha) <= 1.0
+
+    def test_ci_lower_less_than_upper(self):
+        df = _make_factor_data()
+        _, ci = cronbach_alpha(df)
+        assert ci[0] < ci[1]
 
 
 class TestStrongestLoadings:

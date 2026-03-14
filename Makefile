@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test
+.PHONY: install lint typecheck test coverage
 
 install:
 	uv sync
@@ -12,3 +12,6 @@ typecheck:
 
 test:
 	uv run pytest tests/ -v --tb=short
+
+coverage:
+	uv run pytest tests/ --cov=stats_core --cov-report=term-missing

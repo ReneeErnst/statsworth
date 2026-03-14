@@ -38,33 +38,28 @@ class TestCleanColumns:
         assert list(df.columns) == ["ITEM_A"]
 
 
+@pytest.fixture(scope="module")
+def item_df():
+    rng = np.random.default_rng(42)
+    cols = [f"item{i}" for i in range(5)]
+    return pd.DataFrame(rng.integers(1, 6, size=(100, 5)), columns=cols)
+
+
 class TestCorrectedItemTotalCorrelations:
-    def test_returns_correct_columns(self):
-        rng = np.random.default_rng(42)
-        cols = [f"item{i}" for i in range(5)]
-        df = pd.DataFrame(rng.integers(1, 6, size=(100, 5)), columns=cols)
-        result = corrected_item_total_correlations(df)
+    def test_returns_correct_columns(self, item_df):
+        result = corrected_item_total_correlations(item_df)
         assert list(result.columns) == ["Item", "Corrected_Item_Total_Correlation"]
 
-    def test_all_items_present(self):
-        rng = np.random.default_rng(42)
-        cols = [f"item{i}" for i in range(5)]
-        df = pd.DataFrame(rng.integers(1, 6, size=(100, 5)), columns=cols)
-        result = corrected_item_total_correlations(df)
-        assert set(result["Item"]) == set(df.columns)
+    def test_all_items_present(self, item_df):
+        result = corrected_item_total_correlations(item_df)
+        assert set(result["Item"]) == set(item_df.columns)
 
-    def test_correlations_in_valid_range(self):
-        rng = np.random.default_rng(42)
-        cols = [f"item{i}" for i in range(5)]
-        df = pd.DataFrame(rng.integers(1, 6, size=(100, 5)), columns=cols)
-        result = corrected_item_total_correlations(df)
+    def test_correlations_in_valid_range(self, item_df):
+        result = corrected_item_total_correlations(item_df)
         assert result["Corrected_Item_Total_Correlation"].between(-1, 1).all()
 
-    def test_sorted_descending(self):
-        rng = np.random.default_rng(42)
-        cols = [f"item{i}" for i in range(5)]
-        df = pd.DataFrame(rng.integers(1, 6, size=(100, 5)), columns=cols)
-        result = corrected_item_total_correlations(df)
+    def test_sorted_descending(self, item_df):
+        result = corrected_item_total_correlations(item_df)
         corrs = result["Corrected_Item_Total_Correlation"].tolist()
         assert corrs == sorted(corrs, reverse=True)
 

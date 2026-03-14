@@ -1,11 +1,14 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from stats_core.visualization import (
     check_normality,
     corr_matrix,
     corr_matrix_v2,
+    highlight_corr,
     plot_loadings_heatmap,
+    scatter_with_regression,
     scree_parallel_analysis,
     scree_plot,
 )
@@ -17,6 +20,22 @@ def _make_df(seed: int = 0, n: int = 100, cols: int = 3) -> pd.DataFrame:
         rng.normal(size=(n, cols)),
         columns=[f"var{i}" for i in range(cols)],
     )
+
+
+class TestHighlightCorr:
+    @pytest.mark.parametrize(
+        "val,expected_color",
+        [
+            (0.8, "green"),
+            (-0.7, "green"),
+            (1.0, ""),  # exactly 1.0 is excluded from green
+            (0.5, ""),  # between 0.3 and 0.6 → no highlight
+            (0.2, "blue"),
+            (-0.2, "blue"),
+        ],
+    )
+    def test_returns_correct_color(self, val, expected_color):
+        assert highlight_corr(val) == f"background-color: {expected_color}"
 
 
 class TestScreePlot:
@@ -52,11 +71,6 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert isinstance(result, dict)
 
-    def test_returns_dict(self):
-        df = _make_df()
-        result = check_normality(df, dist_plot=False, qq_plot=False)
-        assert isinstance(result, dict)
-
     def test_keys_match_columns(self):
         df = _make_df()
         result = check_normality(df, dist_plot=False, qq_plot=False)
@@ -84,9 +98,10 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert result["x"]["ks_pvalue"] > 0.05
 
-    def test_runs_with_plots(self):
+    @pytest.mark.parametrize("dist_plot,qq_plot", [(True, True), (True, False), (False, True)])
+    def test_runs_with_plots(self, dist_plot, qq_plot):
         df = _make_df(cols=1)
-        result = check_normality(df, dist_plot=True, qq_plot=True)
+        result = check_normality(df, dist_plot=dist_plot, qq_plot=qq_plot)
         assert isinstance(result, dict)
 
 
@@ -108,3 +123,29 @@ class TestCorrMatrixV2:
     def test_runs_without_error(self):
         df = _make_df()
         corr_matrix_v2(df, title="Test Correlation Matrix")
+
+
+class TestScatterWithRegression:
+    def test_returns_float(self):
+        df = _make_df()
+        result = scatter_with_regression(df, "var0", "var1")
+        assert isinstance(result, float)
+
+    def test_correlation_in_valid_range(self):
+        df = _make_df()
+        result = scatter_with_regression(df, "var0", "var1")
+        assert -1.0 <= result <= 1.0
+
+    def test_known_correlation(self):
+        """Perfectly correlated columns should return r=1.0."""
+        rng = np.random.default_rng(0)
+        x = rng.normal(size=100)
+        df = pd.DataFrame({"x": x, "y": x})
+        result = scatter_with_regression(df, "x", "y")
+        assert abs(result - 1.0) < 1e-10
+
+    def test_matches_pandas_corr(self):
+        df = _make_df(seed=7)
+        result = scatter_with_regression(df, "var0", "var2")
+        expected = df["var0"].corr(df["var2"])
+        assert abs(result - expected) < 1e-10

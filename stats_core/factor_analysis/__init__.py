@@ -1,5 +1,6 @@
 from stats_core.factor_analysis.efa import (
     LOW_LOADING_THRESHOLD,
+    cronbach_alpha,
     efa,
     factor_loadings_table,
     get_items_with_low_loadings,
@@ -9,6 +10,7 @@ from stats_core.factor_analysis.efa import (
 
 __all__ = [
     "LOW_LOADING_THRESHOLD",
+    "cronbach_alpha",
     "efa",
     "factor_loadings_table",
     "get_items_with_low_loadings",
