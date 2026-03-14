@@ -29,25 +29,14 @@ A personal reusable Python library for statistical analysis. Uses `uv` for packa
 
 ### Modules
 
-**`statsworth/preprocessing.py`** — Data cleaning utilities:
-- `clean_columns` — normalize column names, drop all-NaN rows, strip survey prefixes
-- `corrected_item_total_correlations` — item-rest correlations for scale reliability
-- `vif` — Variance Inflation Factors for multicollinearity detection
-- `scale_totals(df, subscales: dict[str, list[str]])` — subscale totals; subscales are parameterized by dict (not hardcoded)
+Read the source before making changes. Module-level orientation:
 
-**`statsworth/factor_analysis/efa.py`** — EFA via `factor-analyzer`:
-- `efa`, `parallel_analysis`, `factor_loadings_table`, `get_items_with_low_loadings`, `no_low_loadings_solution`, `strongest_loadings`, `cronbach_alpha`
-- `LOW_LOADING_THRESHOLD = 0.4`
-
-**`statsworth/anova/`** — ANOVA/MANOVA:
-- `one_way.py`: `one_way_anova` (+ Tukey HSD), `welch_anova_and_games_howell`, `games_howell`
-- `manova.py`: `one_way_manova` (+ Tukey), `one_way_manova_games_howell`
-- Games-Howell post-hoc is conditional on significance; `DEFAULT_ALPHA = 0.05`
-
-**`statsworth/sem.py`** — `rmsea_95ci(model)`: RMSEA + 95% CI from a semopy model using noncentral chi-square
-
-**`statsworth/visualization.py`** — Plotting functions; most generate matplotlib figures as side effects while returning data:
-- `efa_item_corr_matrix`, `scree_plot`, `scree_parallel_analysis`, `plot_loadings_heatmap`, `check_normality`, `corr_heatmap`, `highlight_corr`
+- **`statsworth/preprocessing.py`** — Data cleaning and scale utilities
+- **`statsworth/factor_analysis/efa.py`** — EFA via `factor-analyzer`
+- **`statsworth/anova/one_way.py`** — One-way ANOVA and Welch/Games-Howell variants
+- **`statsworth/anova/manova.py`** — One-way MANOVA with post-hoc follow-ups
+- **`statsworth/sem.py`** — SEM fit statistics (RMSEA) via semopy
+- **`statsworth/visualization.py`** — Plotting functions for EFA, correlations, and normality checks
 
 ### Testing conventions
 
