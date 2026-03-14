@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test coverage
+.PHONY: install lint typecheck test coverage pre-commit
 
 install:
 	uv sync
@@ -15,3 +15,6 @@ test:
 
 coverage:
 	uv run pytest tests/ --cov=stats_core --cov-report=term-missing
+
+pre-commit:
+	uv run pre-commit run --all-files
