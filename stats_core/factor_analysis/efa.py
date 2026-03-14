@@ -207,7 +207,7 @@ def strongest_loadings(loadings: np.ndarray, item_names: list[str]) -> pd.DataFr
         sorted by factor then loading magnitude descending.
     """
     df_loadings = pd.DataFrame(loadings, index=item_names)
-    df_loadings.columns = [i + 1 for i in range(df_loadings.shape[1])]
+    df_loadings.columns = [i + 1 for i in range(df_loadings.shape[1])]  # type: ignore[assignment]
 
     strongest_factors = df_loadings.abs().idxmax(axis=1)
 

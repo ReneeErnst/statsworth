@@ -39,10 +39,13 @@ class TestHighlightCorr:
 
 
 class TestScreePlot:
-    @pytest.mark.parametrize("ev,max_viz", [
-        (np.array([3.0, 2.0, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2]), 5),
-        (np.ones(25), 20),
-    ])
+    @pytest.mark.parametrize(
+        "ev,max_viz",
+        [
+            (np.array([3.0, 2.0, 1.5, 1.0, 0.8, 0.5, 0.3, 0.2]), 5),
+            (np.ones(25), 20),
+        ],
+    )
     def test_runs_without_error(self, ev, max_viz):
         scree_plot(ev, max_viz=max_viz)
 
@@ -75,7 +78,9 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert set(result.keys()) == set(df.columns)
 
-    @pytest.mark.parametrize("key", ["describe", "skewness", "kurtosis", "ks_statistic", "ks_pvalue"])
+    @pytest.mark.parametrize(
+        "key", ["describe", "skewness", "kurtosis", "ks_statistic", "ks_pvalue"]
+    )
     def test_result_has_expected_keys(self, key):
         df = _make_df(cols=1)
         result = check_normality(df, dist_plot=False, qq_plot=False)
@@ -93,7 +98,9 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert result["x"]["ks_pvalue"] > 0.05
 
-    @pytest.mark.parametrize("dist_plot,qq_plot", [(True, True), (True, False), (False, True)])
+    @pytest.mark.parametrize(
+        "dist_plot,qq_plot", [(True, True), (True, False), (False, True)]
+    )
     def test_runs_with_plots(self, dist_plot, qq_plot):
         df = _make_df(cols=1)
         result = check_normality(df, dist_plot=dist_plot, qq_plot=qq_plot)
@@ -108,10 +115,13 @@ class TestEfaItemCorrMatrix:
         result = efa_item_corr_matrix(df, list(df.columns))
         assert isinstance(result, pandas.io.formats.style.Styler)
 
-    @pytest.mark.parametrize("cols,expected_shape", [
-        (["var0", "var1"], (2, 2)),
-        (["var0", "var1", "var2"], (3, 3)),
-    ])
+    @pytest.mark.parametrize(
+        "cols,expected_shape",
+        [
+            (["var0", "var1"], (2, 2)),
+            (["var0", "var1", "var2"], (3, 3)),
+        ],
+    )
     def test_shape_matches_cols(self, cols, expected_shape):
         df = _make_df()
         result = efa_item_corr_matrix(df, cols)
@@ -127,7 +137,6 @@ class TestCorrHeatmap:
     def test_runs_without_error(self):
         df = _make_df()
         corr_heatmap(df, title="Test Correlation Matrix")
-
 
 
 class TestScatterWithRegression:

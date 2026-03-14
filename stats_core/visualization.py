@@ -55,9 +55,9 @@ def efa_item_corr_matrix(
         for i in range(n):
             for j in range(n):
                 if j > i:
-                    styles.iloc[i, j] = "visibility: hidden"
+                    styles.iat[i, j] = "visibility: hidden"
                 else:
-                    styles.iloc[i, j] = highlight_corr(data.iloc[i, j])
+                    styles.iat[i, j] = highlight_corr(data.iat[i, j])  # type: ignore[arg-type]
         return styles
 
     styled = corr.style.apply(_style, axis=None)

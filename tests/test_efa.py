@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pytest
 
 from stats_core.factor_analysis.efa import (
     LOW_LOADING_THRESHOLD,
@@ -204,8 +203,6 @@ class TestNoLowLoadingsSolution:
 
 class TestCronbachAlpha:
     def test_returns_float_and_array(self):
-        import numpy as np
-
         df = _make_factor_data()
         alpha, ci = cronbach_alpha(df)
         assert isinstance(float(alpha), float)
