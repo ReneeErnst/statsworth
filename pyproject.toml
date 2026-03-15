@@ -33,6 +33,13 @@ dev = [
     "ruff>=0.9.3",
 ]
 
+[tool.coverage.run]
+relative_files = true
+source_pkgs = ["statsworth"]
+
+[tool.coverage.report]
+fail_under = 90
+
 [tool.mypy]
 ignore_missing_imports = true
 

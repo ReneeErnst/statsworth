@@ -36,15 +36,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: uv sync --extra sem
-      - run: uv run pytest tests/ -v --tb=short --cov=statsworth --cov-report=xml --junit-xml=junit.xml
-      - uses: codecov/codecov-action@v5
-        if: matrix.python-version == '3.14'
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage.xml
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() && matrix.python-version == '3.14' }}
-        uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: junit.xml
+      - run: uv run pytest tests/ -v --tb=short --cov --cov-fail-under=90
