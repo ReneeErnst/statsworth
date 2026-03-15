@@ -39,11 +39,11 @@ jobs:
       - run: uv run pytest tests/ -v --tb=short --cov=statsworth --cov-report=xml --junit-xml=junit.xml
       - uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: junit.xml
