@@ -46,3 +46,38 @@ def rmsea_95ci(model: semopy.Model) -> tuple[float, float, float]:
         upper = np.sqrt(ncp_upper / scale)
 
     return point, lower, upper
+
+
+def fit_indices(model: semopy.Model) -> dict[str, float]:
+    """Extract CFA fit statistics including RMSEA 95% CI.
+
+    Combines ``semopy.calc_stats`` output with the noncentral chi-square
+    RMSEA confidence interval from :func:`rmsea_95ci`.
+
+    Args:
+        model: A fitted ``semopy.Model`` instance.
+
+    Returns:
+        Dict with keys: ``chi2``, ``dof``, ``p_value``, ``cfi``, ``tli``,
+        ``gfi``, ``agfi``, ``nfi``, ``rmsea``, ``rmsea_lower``,
+        ``rmsea_upper``, ``aic``, ``bic``, ``log_lik``.
+    """
+    fit = semopy.calc_stats(model)
+    point, lower, upper = rmsea_95ci(model)
+
+    return {
+        "chi2": float(fit["chi2"].iloc[0]),
+        "dof": float(fit["DoF"].iloc[0]),
+        "p_value": float(fit["chi2 p-value"].iloc[0]),
+        "cfi": float(fit["CFI"].iloc[0]),
+        "tli": float(fit["TLI"].iloc[0]),
+        "gfi": float(fit["GFI"].iloc[0]),
+        "agfi": float(fit["AGFI"].iloc[0]),
+        "nfi": float(fit["NFI"].iloc[0]),
+        "rmsea": point,
+        "rmsea_lower": lower,
+        "rmsea_upper": upper,
+        "aic": float(fit["AIC"].iloc[0]),
+        "bic": float(fit["BIC"].iloc[0]),
+        "log_lik": float(fit["LogLik"].iloc[0]),
+    }

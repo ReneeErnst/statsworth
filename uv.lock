@@ -2737,8 +2737,12 @@ dependencies = [
     { name = "pandas" },
     { name = "scikit-learn" },
     { name = "scipy" },
-    { name = "semopy" },
     { name = "statsmodels" },
+]
+
+[package.optional-dependencies]
+sem = [
+    { name = "semopy" },
 ]
 
 [package.dev-dependencies]
@@ -2761,9 +2765,10 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "scikit-learn", specifier = ">=1.6,<1.8" },
     { name = "scipy", specifier = ">=1.15.1" },
-    { name = "semopy", specifier = ">=2.3.11" },
+    { name = "semopy", marker = "extra == 'sem'", specifier = ">=2.3.11" },
     { name = "statsmodels", specifier = ">=0.14.4" },
 ]
+provides-extras = ["sem"]
 
 [package.metadata.requires-dev]
 dev = [

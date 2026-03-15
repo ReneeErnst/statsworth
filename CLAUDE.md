@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-make install    # uv sync
+make install    # uv sync --extra sem
 make lint       # ruff check + format check
 make typecheck  # mypy statsworth/
 make test       # pytest tests/ -v --tb=short

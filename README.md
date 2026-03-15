@@ -14,6 +14,13 @@ uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git"
 pip install "statsworth @ git+https://github.com/ReneeErnst/statsworth.git"
 ```
 
+To use `statsworth.sem`, include the `sem` extra (installs `semopy`):
+```bash
+uv add "statsworth[sem] @ git+https://github.com/ReneeErnst/statsworth.git"
+# or
+pip install "statsworth[sem] @ git+https://github.com/ReneeErnst/statsworth.git"
+```
+
 Pin to a specific release:
 ```bash
 uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git@v0.1.0"
@@ -21,13 +28,13 @@ uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git@v0.1.0"
 
 ## Modules
 
-| Module | Description |
-|---|---|
-| `statsworth.preprocessing` | Column normalization, item-total correlations, VIF, subscale totals |
-| `statsworth.factor_analysis` | EFA, parallel analysis, loadings utilities, Cronbach's alpha |
-| `statsworth.anova` | One-way ANOVA, Welch ANOVA, MANOVA, Games-Howell post-hoc |
-| `statsworth.sem` | RMSEA + 95% CI from semopy models |
-| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps |
+| Module | Description | Extra required |
+|---|---|---|
+| `statsworth.preprocessing` | Column normalization, item-total correlations, VIF, subscale totals | — |
+| `statsworth.factor_analysis` | EFA, parallel analysis, loadings utilities, Cronbach's alpha | — |
+| `statsworth.anova` | One-way ANOVA, Welch ANOVA, MANOVA, Games-Howell post-hoc | — |
+| `statsworth.sem` | SEM/CFA fit indices and RMSEA 95% CI | `sem` |
+| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps | — |
 
 ## Development
 

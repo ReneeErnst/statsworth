@@ -1,7 +1,7 @@
 .PHONY: install lint typecheck test coverage pre-commit check
 
 install:
-	uv sync
+	uv sync --extra sem
 
 lint:
 	uv run ruff check statsworth/ tests/
