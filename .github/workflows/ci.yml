@@ -7,13 +7,18 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DEFAULT_PYTHON: "3.12"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+      - run: uv sync --all-extras
       - run: uv run ruff check statsworth/ tests/
       - run: uv run ruff format --check statsworth/ tests/
 
@@ -22,7 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync --extra sem
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+      - run: uv sync --all-extras
       - run: uv run mypy statsworth/
 
   test:
@@ -35,5 +42,34 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: uv sync --extra sem
+      - run: uv sync --all-extras
       - run: uv run pytest tests/ -v --tb=short --cov --cov-fail-under=90
+
+  test-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+      - run: uv sync
+      - run: uv run pytest tests/test_preprocessing.py tests/test_anova.py tests/test_manova.py -v --tb=short
+
+  test-extras:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - extra: efa
+            tests: tests/test_efa.py
+          - extra: viz
+            tests: tests/test_visualization.py
+          - extra: sem
+            tests: tests/test_sem.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+      - run: uv sync --extra ${{ matrix.extra }}
+      - run: uv run pytest ${{ matrix.tests }} -v --tb=short
