@@ -43,7 +43,7 @@ uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git@v0.1.0"
 | `statsworth.preprocessing` | Column normalization, item-total correlations, VIF, subscale totals | — |
 | `statsworth.anova` | One-way ANOVA, Welch ANOVA, MANOVA, Games-Howell post-hoc | — |
 | `statsworth.factor_analysis` | EFA, parallel analysis, loadings utilities, Cronbach's alpha | `efa` |
-| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps | `viz` |
+| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps | `viz` (included in `efa`) |
 | `statsworth.sem` | SEM/CFA fit indices and RMSEA 95% CI | `sem` |
 
 ## Development
