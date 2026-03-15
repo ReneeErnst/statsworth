@@ -7,17 +7,28 @@ A reusable Python library for statistical analysis, built to support research wo
 
 ## Installation
 
+The base package includes preprocessing and ANOVA modules:
+
 ```bash
 uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git"
 # or
 pip install "statsworth @ git+https://github.com/ReneeErnst/statsworth.git"
 ```
 
-To use `statsworth.sem`, include the `sem` extra (installs `semopy`):
+Install optional extras as needed:
+
 ```bash
+# EFA (factor-analyzer, scikit-learn)
+uv add "statsworth[efa] @ git+https://github.com/ReneeErnst/statsworth.git"
+
+# Visualization (matplotlib)
+uv add "statsworth[viz] @ git+https://github.com/ReneeErnst/statsworth.git"
+
+# SEM (semopy)
 uv add "statsworth[sem] @ git+https://github.com/ReneeErnst/statsworth.git"
-# or
-pip install "statsworth[sem] @ git+https://github.com/ReneeErnst/statsworth.git"
+
+# Everything
+uv add "statsworth[all] @ git+https://github.com/ReneeErnst/statsworth.git"
 ```
 
 Pin to a specific release:
@@ -27,18 +38,18 @@ uv add "statsworth @ git+https://github.com/ReneeErnst/statsworth.git@v0.1.0"
 
 ## Modules
 
-| Module | Description | Extra required |
+| Module | Description | Extra |
 |---|---|---|
 | `statsworth.preprocessing` | Column normalization, item-total correlations, VIF, subscale totals | — |
-| `statsworth.factor_analysis` | EFA, parallel analysis, loadings utilities, Cronbach's alpha | — |
 | `statsworth.anova` | One-way ANOVA, Welch ANOVA, MANOVA, Games-Howell post-hoc | — |
+| `statsworth.factor_analysis` | EFA, parallel analysis, loadings utilities, Cronbach's alpha | `efa` |
+| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps | `viz` |
 | `statsworth.sem` | SEM/CFA fit indices and RMSEA 95% CI | `sem` |
-| `statsworth.visualization` | Scree plots, loadings heatmaps, normality diagnostics, correlation heatmaps | — |
 
 ## Development
 
 ```bash
-uv sync          # install dependencies
+make install     # uv sync --all-extras
 make lint        # ruff check + format check
 make typecheck   # mypy
 make test        # pytest

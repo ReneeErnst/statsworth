@@ -9,18 +9,20 @@ description = "Unified statistical analysis library"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "factor-analyzer>=0.5.1",
-    "scikit-learn>=1.6,<1.8",  # factor-analyzer uses removed sklearn 1.8 internal (force_all_finite)
-    "matplotlib>=3.10.0",
     "numpy>=2.2.2",
-    "openpyxl>=3.1.5",
     "pandas>=2.2.3",
     "scipy>=1.15.1",
     "statsmodels>=0.14.4",
 ]
 
 [project.optional-dependencies]
+efa = [
+    "factor-analyzer>=0.5.1",
+    "scikit-learn>=1.6,<1.8",  # factor-analyzer uses removed sklearn 1.8 internal (force_all_finite)
+]
+viz = ["matplotlib>=3.10.0"]
 sem = ["semopy>=2.3.11"]
+all = ["statsworth[efa,viz,sem]"]
 
 [dependency-groups]
 dev = [
