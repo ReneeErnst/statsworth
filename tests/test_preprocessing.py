@@ -93,9 +93,7 @@ class TestVif:
     def test_high_vif_for_collinear_features(self, feature):
         rng = np.random.default_rng(42)
         x = rng.normal(size=100)
-        df = pd.DataFrame(
-            {"a": x, "b": x + rng.normal(0, 0.01, 100), "c": rng.normal(size=100)}
-        )
+        df = pd.DataFrame({"a": x, "b": x + rng.normal(0, 0.01, 100), "c": rng.normal(size=100)})
         result = vif(df)
         feature_vifs = result[result["feature"] != "const"].set_index("feature")["VIF"]
         assert feature_vifs[feature] > 10

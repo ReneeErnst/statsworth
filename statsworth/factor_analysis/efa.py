@@ -1,10 +1,7 @@
 """Exploratory Factor Analysis (EFA) utilities."""
 
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
-import pingouin as pg
 from factor_analyzer.factor_analyzer import FactorAnalyzer
 
 LOW_LOADING_THRESHOLD = 0.4
@@ -20,7 +17,17 @@ def cronbach_alpha(df: pd.DataFrame) -> tuple[float, np.ndarray]:
         Tuple of ``(alpha, ci)`` where ``alpha`` is the point estimate and
         ``ci`` is a length-2 array with the 95% confidence interval bounds.
     """
-    return pg.cronbach_alpha(df)
+    from scipy.stats import f as f_dist
+
+    k = df.shape[1]
+    n = df.shape[0]
+    item_vars = df.var(ddof=1)
+    total_var = df.sum(axis=1).var(ddof=1)
+    alpha = (k / (k - 1)) * (1 - item_vars.sum() / total_var)
+    df1, df2 = n - 1, (n - 1) * (k - 1)
+    fl = f_dist.ppf(0.025, df1, df2)
+    fu = f_dist.ppf(0.975, df1, df2)
+    return float(alpha), np.array([1 - (1 - alpha) * fu, 1 - (1 - alpha) * fl])
 
 
 def efa(
@@ -55,7 +62,7 @@ def efa(
 
 def parallel_analysis(
     df: pd.DataFrame,
-    K: int = 10,
+    K: int = 10,  # noqa: N803 — uppercase K is standard parallel-analysis notation
     print_eigenvalues: bool = False,
     show_scree_plot: bool = False,
     max_scree_factors: int = 20,
@@ -98,9 +105,7 @@ def parallel_analysis(
         print("Factor eigenvalues for random data:\n", avg_factor_eigens)
         print("Factor eigenvalues for real data:\n", data_ev)
 
-    print(
-        f"Parallel analysis suggests that the number of factors = {suggested_factors}"
-    )  # noqa: E501
+    print(f"Parallel analysis suggests that the number of factors = {suggested_factors}")
 
     if show_scree_plot:
         from statsworth.visualization import scree_parallel_analysis
@@ -133,13 +138,8 @@ def factor_loadings_table(
 
     loadings_dict = {}
     for factor_idx, factor_name in enumerate(factor_names):
-        if isinstance(item_names, pd.Index):
-            valid_index = item_names
-        else:
-            valid_index = item_names[factor_idx]
-        loadings_dict[factor_name] = pd.Series(
-            loadings[:, factor_idx], index=valid_index
-        )
+        valid_index = item_names if isinstance(item_names, pd.Index) else item_names[factor_idx]
+        loadings_dict[factor_name] = pd.Series(loadings[:, factor_idx], index=valid_index)
 
     return pd.DataFrame(loadings_dict)
 
@@ -160,9 +160,7 @@ def get_items_with_low_loadings(
         List of item names with no loading above the threshold.
     """
     return [
-        item_names[i]
-        for i in range(len(item_names))
-        if all(abs(loading) < threshold for loading in loadings[i, :])
+        item_names[i] for i in range(len(item_names)) if all(abs(loading) < threshold for loading in loadings[i, :])
     ]
 
 
@@ -170,7 +168,7 @@ def no_low_loadings_solution(
     df: pd.DataFrame,
     low_loadings: list[str],
     n_factors: int,
-) -> Tuple[pd.DataFrame, FactorAnalyzer]:
+) -> tuple[pd.DataFrame, FactorAnalyzer]:
     """Iteratively remove low-loading items and re-run EFA until none remain.
 
     Args:
@@ -211,13 +209,7 @@ def strongest_loadings(loadings: np.ndarray, item_names: list[str]) -> pd.DataFr
 
     strongest_factors = df_loadings.abs().idxmax(axis=1)
 
-    df_result = pd.DataFrame(
-        {"item": item_names, "strongest_factor": strongest_factors}
-    )
-    df_result["loading"] = df_result.apply(
-        lambda row: df_loadings.loc[row["item"], row["strongest_factor"]], axis=1
-    )
+    df_result = pd.DataFrame({"item": item_names, "strongest_factor": strongest_factors})
+    df_result["loading"] = df_result.apply(lambda row: df_loadings.loc[row["item"], row["strongest_factor"]], axis=1)
 
-    return df_result.sort_values(
-        by=["strongest_factor", "loading"], ascending=[True, False]
-    )
+    return df_result.sort_values(by=["strongest_factor", "loading"], ascending=[True, False])

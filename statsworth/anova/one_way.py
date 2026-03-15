@@ -28,9 +28,7 @@ def one_way_anova(df: pd.DataFrame, group_col: str, dv_col: str) -> tuple:
     return anova_table, tukey_results
 
 
-def welch_anova_and_games_howell(
-    df: pd.DataFrame, group_col: str, dv_col: str
-) -> tuple:
+def welch_anova_and_games_howell(df: pd.DataFrame, group_col: str, dv_col: str) -> tuple:
     """Perform Welch's ANOVA with Games-Howell post-hoc test.
 
     Games-Howell is only computed when Welch's ANOVA is significant

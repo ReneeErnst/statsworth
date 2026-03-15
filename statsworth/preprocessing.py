@@ -68,13 +68,11 @@ def vif(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with columns ``feature`` and ``VIF``.
     """
-    X = add_constant(df)
+    x = add_constant(df)
     result = pd.DataFrame(
         {
-            "feature": X.columns,
-            "VIF": [
-                variance_inflation_factor(X.values, i) for i in range(len(X.columns))
-            ],
+            "feature": x.columns,
+            "VIF": [variance_inflation_factor(x.values, i) for i in range(len(x.columns))],
         }
     )
     return result

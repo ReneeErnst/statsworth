@@ -56,13 +56,13 @@ def _make_unequal_variance_groups(seed: int = 0) -> pd.DataFrame:
 class TestOneWayAnova:
     def test_significant_result(self):
         df = _make_significant_groups()
-        anova_table, tukey = one_way_anova(df, "group", "score")
+        anova_table, _tukey = one_way_anova(df, "group", "score")
         p_value = anova_table["PR(>F)"].dropna().iloc[0]
         assert p_value < 0.05
 
     def test_nonsignificant_result(self):
         df = _make_nonsignificant_groups()
-        anova_table, tukey = one_way_anova(df, "group", "score")
+        anova_table, _tukey = one_way_anova(df, "group", "score")
         p_value = anova_table["PR(>F)"].dropna().iloc[0]
         assert p_value > 0.05
 

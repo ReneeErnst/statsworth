@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test coverage pre-commit
+.PHONY: install lint typecheck test coverage pre-commit check
 
 install:
 	uv sync
@@ -18,3 +18,5 @@ coverage:
 
 pre-commit:
 	uv run pre-commit run --all-files
+
+check: lint typecheck test

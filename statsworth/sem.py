@@ -1,7 +1,5 @@
 """Structural equation model fit indices."""
 
-from typing import Tuple
-
 import numpy as np
 import semopy
 from scipy.optimize import brentq
@@ -9,7 +7,7 @@ from scipy.stats import chi2 as chi2_dist
 from scipy.stats import ncx2
 
 
-def rmsea_95ci(model: semopy.Model) -> Tuple[float, float, float]:
+def rmsea_95ci(model: semopy.Model) -> tuple[float, float, float]:
     """Compute the RMSEA point estimate and 95% confidence interval.
 
     Uses the noncentral chi-square method (MacCallum et al., 1996): finds the
@@ -34,9 +32,7 @@ def rmsea_95ci(model: semopy.Model) -> Tuple[float, float, float]:
     if chi2_dist.cdf(chi2_obs, dof) < 0.975:
         lower = 0.0
     else:
-        ncp_lower = brentq(
-            lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.975, 0, chi2_obs * 4
-        )
+        ncp_lower = brentq(lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.975, 0, chi2_obs * 4)
         lower = np.sqrt(ncp_lower / scale)
 
     if chi2_dist.cdf(chi2_obs, dof) < 0.025:

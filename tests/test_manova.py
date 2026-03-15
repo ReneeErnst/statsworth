@@ -11,12 +11,8 @@ def _make_significant_manova_data(seed: int = 0) -> pd.DataFrame:
     return pd.DataFrame(
         {
             "group": ["A"] * 60 + ["B"] * 60 + ["C"] * 60,
-            "dv1": np.concatenate(
-                [rng.normal(10, 1, 60), rng.normal(20, 1, 60), rng.normal(30, 1, 60)]
-            ),
-            "dv2": np.concatenate(
-                [rng.normal(5, 1, 60), rng.normal(15, 1, 60), rng.normal(25, 1, 60)]
-            ),
+            "dv1": np.concatenate([rng.normal(10, 1, 60), rng.normal(20, 1, 60), rng.normal(30, 1, 60)]),
+            "dv2": np.concatenate([rng.normal(5, 1, 60), rng.normal(15, 1, 60), rng.normal(25, 1, 60)]),
         }
     )
 
@@ -36,7 +32,7 @@ def _make_nonsignificant_manova_data(seed: int = 0) -> pd.DataFrame:
 class TestOneWayManova:
     def test_significant_returns_follow_up_dicts(self):
         df = _make_significant_manova_data()
-        manova, anova_tables, tukey = one_way_manova(df, "group", ["dv1", "dv2"])
+        _manova, anova_tables, tukey = one_way_manova(df, "group", ["dv1", "dv2"])
         assert anova_tables is not None
         assert tukey is not None
         assert set(anova_tables.keys()) == {"dv1", "dv2"}
@@ -44,7 +40,7 @@ class TestOneWayManova:
 
     def test_nonsignificant_returns_none_follow_ups(self):
         df = _make_nonsignificant_manova_data()
-        manova, anova_tables, tukey = one_way_manova(df, "group", ["dv1", "dv2"])
+        _manova, anova_tables, tukey = one_way_manova(df, "group", ["dv1", "dv2"])
         assert anova_tables is None
         assert tukey is None
 
@@ -69,7 +65,7 @@ class TestOneWayManova:
 class TestOneWayManovaGamesHowell:
     def test_significant_returns_follow_up_dicts(self):
         df = _make_significant_manova_data()
-        manova, welch, gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
+        _manova, welch, gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
         assert welch is not None
         assert gh is not None
         assert set(welch.keys()) == {"dv1", "dv2"}
@@ -77,7 +73,7 @@ class TestOneWayManovaGamesHowell:
 
     def test_nonsignificant_returns_none_follow_ups(self):
         df = _make_nonsignificant_manova_data()
-        manova, welch, gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
+        _manova, welch, gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"])
         assert welch is None
         assert gh is None
 
@@ -102,7 +98,5 @@ class TestOneWayManovaGamesHowell:
     def test_custom_alpha(self):
         df = _make_significant_manova_data()
         # Should still be significant at stricter alpha
-        manova, welch, gh = one_way_manova_games_howell(
-            df, "group", ["dv1", "dv2"], alpha=0.001
-        )
+        _manova, welch, _gh = one_way_manova_games_howell(df, "group", ["dv1", "dv2"], alpha=0.001)
         assert welch is not None

@@ -195,9 +195,7 @@ class TestNoLowLoadingsSolution:
         fa = efa(df, n_factors=3)
         low = get_items_with_low_loadings(fa.loadings_, list(df.columns))
         result_df, result_model = no_low_loadings_solution(df, low, n_factors=3)
-        remaining_low = get_items_with_low_loadings(
-            result_model.loadings_, list(result_df.columns)
-        )
+        remaining_low = get_items_with_low_loadings(result_model.loadings_, list(result_df.columns))
         assert remaining_low == []
 
 
