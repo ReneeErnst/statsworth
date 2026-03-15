@@ -30,7 +30,7 @@ from statsworth.visualization import (
     scree_plot,
 )
 
-__all__ = [
+__all__ = [  # noqa: RUF022 — grouped by module, not alphabetically
     # preprocessing
     "clean_columns",
     "corrected_item_total_correlations",

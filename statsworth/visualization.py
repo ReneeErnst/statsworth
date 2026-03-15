@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
-import seaborn as sns
+from scipy.stats import gaussian_kde
 
 
 def highlight_corr(val: float) -> str:
@@ -104,9 +104,7 @@ def scree_parallel_analysis(
         label="FA - random",
         alpha=0.4,
     )
-    plt.scatter(
-        range(1, max_scree_factors + 1), data_ev[:max_scree_factors], c="g", marker="o"
-    )
+    plt.scatter(range(1, max_scree_factors + 1), data_ev[:max_scree_factors], c="g", marker="o")
     plt.plot(
         range(1, max_scree_factors + 1),
         data_ev[:max_scree_factors],
@@ -136,19 +134,19 @@ def plot_loadings_heatmap(
         item_names: Item labels for the y-axis (rows).
         factor_names: Factor labels for the x-axis (columns).
     """
-    plt.figure(figsize=(20, 16))
-    sns.heatmap(
-        loadings,
-        annot=True,
-        cmap="coolwarm",
-        fmt=".2f",
-        annot_kws={"size": 8},
-        xticklabels=factor_names,
-        yticklabels=item_names,
-    )
-    plt.title("Factor Loadings Heatmap")
-    plt.xlabel("Factors")
-    plt.ylabel("Items")
+    _fig, ax = plt.subplots(figsize=(20, 16))
+    im = ax.imshow(loadings, cmap="coolwarm", vmin=-1, vmax=1, aspect="auto")
+    plt.colorbar(im, ax=ax)
+    for i in range(loadings.shape[0]):
+        for j in range(loadings.shape[1]):
+            ax.text(j, i, f"{loadings[i, j]:.2f}", ha="center", va="center", fontsize=8)
+    ax.set_xticks(range(len(factor_names)))
+    ax.set_xticklabels(factor_names)
+    ax.set_yticks(range(len(item_names)))
+    ax.set_yticklabels(item_names)
+    ax.set_title("Factor Loadings Heatmap")
+    ax.set_xlabel("Factors")
+    ax.set_ylabel("Items")
     plt.show()
 
 
@@ -187,13 +185,16 @@ def check_normality(
         }
 
         if dist_plot or qq_plot:
-            fig, ax = plt.subplots(
-                1, 2 if dist_plot and qq_plot else 1, figsize=(12, 4)
-            )
+            _fig, ax = plt.subplots(1, 2 if dist_plot and qq_plot else 1, figsize=(12, 4))
 
             if dist_plot:
-                sns.histplot(df[col], kde=True, ax=ax[0] if qq_plot else ax)
-                (ax[0] if qq_plot else ax).set_title(f"Distribution Plot of {col}")
+                target_ax = ax[0] if qq_plot else ax
+                data = df[col].dropna().to_numpy()
+                target_ax.hist(data, density=True, bins="auto", alpha=0.7)
+                kde = gaussian_kde(data)
+                x_range = np.linspace(data.min(), data.max(), 200)
+                target_ax.plot(x_range, kde(x_range))
+                target_ax.set_title(f"Distribution Plot of {col}")
 
             if qq_plot:
                 stats.probplot(df[col], dist="norm", plot=ax[1] if dist_plot else ax)
@@ -220,7 +221,11 @@ def scatter_with_regression(df: pd.DataFrame, x: str, y: str) -> float:
     Returns:
         Pearson correlation coefficient between ``x`` and ``y``.
     """
-    sns.lmplot(x=x, y=y, data=df)
+    _fig, ax = plt.subplots()
+    ax.scatter(df[x], df[y], alpha=0.5)
+    m, b = np.polyfit(df[x].dropna(), df[y].dropna(), 1)
+    x_line = np.linspace(df[x].min(), df[x].max(), 100)
+    ax.plot(x_line, m * x_line + b)
     plt.show()
     return float(df[x].corr(df[y]))
 
@@ -232,9 +237,21 @@ def corr_heatmap(df: pd.DataFrame, title: str) -> None:
         df: DataFrame whose columns are correlated.
         title: Plot title.
     """
-    fig, ax = plt.subplots(figsize=(20, 10))
+    _fig, ax = plt.subplots(figsize=(20, 10))
     corr_df = df.corr()
-    mask = np.triu(np.ones_like(corr_df, dtype=bool))
-    sns.heatmap(corr_df, annot=True, cmap="Blues", ax=ax, center=0, mask=mask)
+    corr_data = corr_df.to_numpy()
+    mask = np.triu(np.ones_like(corr_data, dtype=bool))
+    display = np.where(mask, np.nan, corr_data)
+    im = ax.imshow(display, cmap="Blues", vmin=-1, vmax=1, aspect="auto")
+    plt.colorbar(im, ax=ax)
+    n = len(corr_df)
+    for i in range(n):
+        for j in range(n):
+            if not mask[i, j]:
+                ax.text(j, i, f"{corr_data[i, j]:.2f}", ha="center", va="center", fontsize=7)
+    ax.set_xticks(range(n))
+    ax.set_xticklabels(corr_df.columns, rotation=90)
+    ax.set_yticks(range(n))
+    ax.set_yticklabels(corr_df.index)
     ax.set_title(title)
     plt.show()

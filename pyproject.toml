@@ -15,9 +15,7 @@ dependencies = [
     "numpy>=2.2.2",
     "openpyxl>=3.1.5",
     "pandas>=2.2.3",
-    "pingouin>=0.5.5",
     "scipy>=1.15.1",
-    "seaborn>=0.13.0",
     "semopy>=2.3.11",
     "statsmodels>=0.14.4",
 ]
@@ -39,9 +37,18 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+filterwarnings = [
+    # sklearn internal rename; pinned scikit-learn<1.8 until factor-analyzer is updated
+    "ignore:'force_all_finite' was renamed:FutureWarning:sklearn",
+    # expected: Agg is a non-interactive backend used in tests
+    "ignore:FigureCanvasAgg is non-interactive:UserWarning",
+]
 
 [tool.ruff]
-line-length = 88
+line-length = 119
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I", "W", "N", "UP", "B", "C90", "RUF", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["statsworth"]

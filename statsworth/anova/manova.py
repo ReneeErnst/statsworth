@@ -1,6 +1,6 @@
 """One-way MANOVA with follow-up analyses."""
 
-from typing import Callable
+from collections.abc import Callable
 
 import pandas as pd
 import statsmodels.api as sm
@@ -57,9 +57,7 @@ def _run_manova(
     return manova_results, None, None
 
 
-def _tukey_follow_up(
-    df: pd.DataFrame, group_col: str, dv_cols: list[str], alpha: float
-) -> tuple[dict, dict]:
+def _tukey_follow_up(df: pd.DataFrame, group_col: str, dv_cols: list[str], alpha: float) -> tuple[dict, dict]:
     anova_tables: dict = {}
     tukey_results: dict = {}
     for dv in dv_cols:
@@ -69,17 +67,13 @@ def _tukey_follow_up(
     return anova_tables, tukey_results
 
 
-def _games_howell_follow_up(
-    df: pd.DataFrame, group_col: str, dv_cols: list[str], alpha: float
-) -> tuple[dict, dict]:
+def _games_howell_follow_up(df: pd.DataFrame, group_col: str, dv_cols: list[str], alpha: float) -> tuple[dict, dict]:
     welch_tables: dict = {}
     gh_results: dict = {}
     for dv in dv_cols:
         welch = sms.anova_oneway(df[dv], df[group_col], use_var="unequal")
         welch_tables[dv] = welch
-        gh_results[dv] = (
-            games_howell(df, group_col, dv) if welch.pvalue < alpha else None
-        )
+        gh_results[dv] = games_howell(df, group_col, dv) if welch.pvalue < alpha else None
     return welch_tables, gh_results
 
 

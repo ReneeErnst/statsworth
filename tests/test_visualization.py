@@ -78,9 +78,7 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert set(result.keys()) == set(df.columns)
 
-    @pytest.mark.parametrize(
-        "key", ["describe", "skewness", "kurtosis", "ks_statistic", "ks_pvalue"]
-    )
+    @pytest.mark.parametrize("key", ["describe", "skewness", "kurtosis", "ks_statistic", "ks_pvalue"])
     def test_result_has_expected_keys(self, key):
         df = _make_df(cols=1)
         result = check_normality(df, dist_plot=False, qq_plot=False)
@@ -98,9 +96,7 @@ class TestCheckNormality:
         result = check_normality(df, dist_plot=False, qq_plot=False)
         assert result["x"]["ks_pvalue"] > 0.05
 
-    @pytest.mark.parametrize(
-        "dist_plot,qq_plot", [(True, True), (True, False), (False, True)]
-    )
+    @pytest.mark.parametrize("dist_plot,qq_plot", [(True, True), (True, False), (False, True)])
     def test_runs_with_plots(self, dist_plot, qq_plot):
         df = _make_df(cols=1)
         result = check_normality(df, dist_plot=dist_plot, qq_plot=qq_plot)

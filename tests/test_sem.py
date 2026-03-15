@@ -36,14 +36,10 @@ def _expected_95ci(chi2_obs: float, dof: float, n: int):
     if chi2_dist.cdf(chi2_obs, dof) < 0.975:
         lower = 0.0
     else:
-        ncp_lower = brentq(
-            lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.975, 0, chi2_obs * 4
-        )
+        ncp_lower = brentq(lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.975, 0, chi2_obs * 4)
         lower = np.sqrt(ncp_lower / scale)
 
-    ncp_upper = brentq(
-        lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.025, 0, chi2_obs * 4
-    )
+    ncp_upper = brentq(lambda ncp: ncx2.cdf(chi2_obs, dof, ncp) - 0.025, 0, chi2_obs * 4)
     upper = np.sqrt(ncp_upper / scale)
 
     return lower, upper
