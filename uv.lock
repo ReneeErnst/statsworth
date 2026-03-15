@@ -2724,6 +2724,7 @@ all = [
 ]
 efa = [
     { name = "factor-analyzer" },
+    { name = "matplotlib" },
     { name = "scikit-learn" },
 ]
 sem = [
@@ -2747,6 +2748,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "factor-analyzer", marker = "extra == 'efa'", specifier = ">=0.5.1" },
+    { name = "matplotlib", marker = "extra == 'efa'", specifier = ">=3.10.0" },
     { name = "matplotlib", marker = "extra == 'viz'", specifier = ">=3.10.0" },
     { name = "numpy", specifier = ">=2.2.2" },
     { name = "pandas", specifier = ">=2.2.3" },
