@@ -20,12 +20,11 @@ def highlight_corr(val: float) -> str:
         CSS background-color string.
     """
     if abs(val) > 0.6 and val != 1.0:
-        color = "green"
+        return "background-color: #c6efce; color: #1a1a1a"
     elif abs(val) < 0.3:
-        color = "blue"
+        return "background-color: #bdd7ee; color: #1a1a1a"
     else:
-        color = ""
-    return f"background-color: {color}"
+        return ""
 
 
 def efa_item_corr_matrix(
