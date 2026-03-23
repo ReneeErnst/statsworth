@@ -24,18 +24,18 @@ def _make_df(seed: int = 0, n: int = 100, cols: int = 3) -> pd.DataFrame:
 
 class TestHighlightCorr:
     @pytest.mark.parametrize(
-        "val,expected_color",
+        "val,expected",
         [
-            (0.8, "green"),
-            (-0.7, "green"),
+            (0.8, "background-color: #c6efce; color: #1a1a1a"),
+            (-0.7, "background-color: #c6efce; color: #1a1a1a"),
             (1.0, ""),  # exactly 1.0 is excluded from green
             (0.5, ""),  # between 0.3 and 0.6 → no highlight
-            (0.2, "blue"),
-            (-0.2, "blue"),
+            (0.2, "background-color: #bdd7ee; color: #1a1a1a"),
+            (-0.2, "background-color: #bdd7ee; color: #1a1a1a"),
         ],
     )
-    def test_returns_correct_color(self, val, expected_color):
-        assert highlight_corr(val) == f"background-color: {expected_color}"
+    def test_returns_correct_color(self, val, expected):
+        assert highlight_corr(val) == expected
 
 
 class TestScreePlot:
